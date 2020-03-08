@@ -6,8 +6,8 @@ import threading
 import sys
 
 # List of bluetooth addresses to scan
-BT_ADDR_LIST = {"Watch Ard": "E4:50:EB:00:EF:DF",
-                "IPhone Ard": "F8:2D:7C:EF:40:17"}
+BT_ADDR_LIST = {"E4:50:EB:00:EF:DF": "Watch Ard",
+                "F8:2D:7C:EF:40:17": "IPhone Ard"}
 DAILY = False  # Set to True to invoke callback only once per day per address
 DEBUG = True  # Set to True to print out debug messages
 THRESHOLD = (-10, 10)
