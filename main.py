@@ -6,7 +6,8 @@ import threading
 import sys
 
 # List of bluetooth addresses to scan
-BT_ADDR_LIST = ["E4:50:EB:00:EF:DF", "F8:2D:7C:EF:40:17"]
+BT_ADDR_LIST = {"Watch Ard": "E4:50:EB:00:EF:DF",
+                "IPhone Ard": "F8:2D:7C:EF:40:17"}
 DAILY = False  # Set to True to invoke callback only once per day per address
 DEBUG = True  # Set to True to print out debug messages
 THRESHOLD = (-10, 10)
@@ -14,7 +15,7 @@ SLEEP = 1
 
 
 def dummy_callback(addr):
-    print "Dummy callback function invoked: " + addr
+    print "Dummy callback function invoked: " + BT_ADDR_LIST[addr]
 
 
 def bluetooth_listen(
@@ -120,7 +121,7 @@ def main():
         print "Please edit this file and set BT_ADDR_LIST variable"
         sys.exit(1)
     threads = []
-    for addr in BT_ADDR_LIST:
+    for key, addr in BT_ADDR_LIST.items():
         th = start_thread(addr=addr, callback=dummy_callback)
         threads.append(th)
     while True:
