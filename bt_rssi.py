@@ -54,7 +54,7 @@ class BluetoothRSSI(object):
             print('---')
             print(rssi[3])
             print(type(rssi[3]))
-            rssi = struct.unpack('b', rssi)[0]
+            rssi = struct.unpack('b', rssi)
             return rssi
         except IOError:
             # Happens if connection fails (e.g. device is not in range)
