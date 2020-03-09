@@ -33,7 +33,7 @@ def dummy_callback(addr, rssi):
     x = float((rssi-A0)/(-10*n))
     distance = (math.pow(10, x) * 100) + c
     print(distance)
-    GPIO.output(BT_ADDR_GPIO_DICT[addr], GPIO.HIGH)
+    GPIO.output(BT_ADDR_DICT[addr], GPIO.HIGH)
     print(f"led {BT_ADDR_DICT[addr].name} is on")
 
 
