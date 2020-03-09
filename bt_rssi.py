@@ -35,7 +35,6 @@ class BluetoothRSSI(object):
 
     def get_rssi(self):
         """Gets the current RSSI value.
-
         @return: The RSSI value (float) or None if the device connection fails
                  (i.e. the device is nowhere nearby).
         """
@@ -49,9 +48,6 @@ class BluetoothRSSI(object):
             rssi = bt.hci_send_req(
                 self.hci_sock, bt.OGF_STATUS_PARAM,
                 bt.OCF_READ_RSSI, bt.EVT_CMD_COMPLETE, 4, self.cmd_pkt)
-            # Also read in the status of the response (Ard)
-            status = int(rssi[0])
-            assert status == 0
             rssi = struct.unpack('b', rssi[3])[0]
             return rssi
         except IOError:
