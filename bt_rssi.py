@@ -50,7 +50,7 @@ class BluetoothRSSI(object):
                 self.hci_sock, bt.OGF_STATUS_PARAM,
                 bt.OCF_READ_RSSI, bt.EVT_CMD_COMPLETE, 4, self.cmd_pkt)
             print("type")
-            print(type(rssi))
+            print(rssi.decode())
             rssi = struct.unpack('b', rssi[3])[0]
             return rssi
         except IOError:
