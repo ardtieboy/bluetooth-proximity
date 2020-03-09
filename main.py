@@ -8,32 +8,36 @@ import math
 import RPi.GPIO as GPIO
 
 
+class Device:
+    def __init__(self, name, pin):
+        self.name = name
+        self.pin = pin
+
+
 # List of bluetooth addresses to scan
-BT_ADDR_DICT = {"E4:50:EB:00:EF:DF":"Ard Watch","F8:2D:7C:EF:40:17":"Ard IPhone"}
-BT_ADDR_GPIO_DICT = {"E4:50:EB:00:EF:DF":15,"F8:2D:7C:EF:40:17":14}
-BT_ADDR_LIST = [
-"E4:50:EB:00:EF:DF",
-"F8:2D:7C:EF:40:17",
-]
+BT_ADDR_DICT = {
+    "E4:50:EB:00:EF:DF": Device("Ard Watch", 15),
+    "F8:2D:7C:EF:40:17": Device("Ard IPhone", 14)}
 DAILY = False  # Set to True to invoke callback only once per day per address
 DEBUG = True  # Set to True to print out debug messages
-THRESHOLD = (-2, 2)
+THRESHOLD = (-10, 10)
 SLEEP = 1
 
-A0=0
-n=1.5
-c=0
 
 def dummy_callback(addr, rssi):
-    print "Dummy callback function invoked: " + BT_ADDR_DICT[addr]
-    x = float((rssi-A0)/(-10*n))         #Log Normal Shadowing Model considering d0 =1m where
-    distance = (math.pow(10,x) * 100) + c
-    print distance
+    print(f"Dummy callback function invoked: {BT_ADDR_DICT[addr].name}")
+    # Log Normal Shadowing Model considering d0 =1m where
+    A0 = 0
+    n = 1.5
+    c = 0
+    x = float((rssi-A0)/(-10*n))
+    distance = (math.pow(10, x) * 100) + c
+    print(distance)
     GPIO.output(BT_ADDR_GPIO_DICT[addr], GPIO.HIGH)
-    print "led " + str(BT_ADDR_GPIO_DICT[addr]) + " is on" 
+    print(f"led {BT_ADDR_DICT[addr].name} is on")
 
-def bluetooth_listen(
-        addr, threshold, callback, sleep=1, daily=True, debug=False):
+
+def bluetooth_listen(addr, threshold, callback, sleep=1, daily=True, debug=False):
     """Scans for RSSI value of bluetooth address in a loop. When the value is
     within the threshold, calls the callback function.
 
@@ -57,11 +61,7 @@ def bluetooth_listen(
                    actually sleep until tomorrow if `daily` is True.
     @type: debug: bool
     """
-
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(BT_ADDR_GPIO_DICT[addr],GPIO.OUT)
-    GPIO.output(BT_ADDR_GPIO_DICT[addr],GPIO.HIGH)
-
+    init_pins(addr)
     b = BluetoothRSSI(addr=addr)
     while True:
         rssi = b.get_rssi()
@@ -71,27 +71,22 @@ def bluetooth_listen(
         # Sleep and then skip to next iteration if device not found
         if rssi is None:
             time.sleep(sleep)
-            GPIO.output(BT_ADDR_GPIO_DICT[addr], GPIO.LOW)
+            GPIO.output(BT_ADDR_DICT[addr].pin, GPIO.LOW)
             continue
         # Trigger if RSSI value is within threshold
         if threshold[0] < rssi < threshold[1]:
             callback(addr, rssi)
-            if daily:
-                # Calculate the time remaining until next day
-                now = datetime.datetime.now()
-                tomorrow = datetime.datetime(
-                    now.year, now.month, now.day, 0, 0, 0, 0) + \
-                    datetime.timedelta(days=1)
-                until_tomorrow = (tomorrow - now).seconds
-                if debug:
-                    print "Seconds until tomorrow: {}".format(until_tomorrow)
-                else:
-                    time.sleep(until_tomorrow)
         else:
             print 'Resetting the led'
-            GPIO.output(BT_ADDR_GPIO_DICT[addr], GPIO.LOW)
+            GPIO.output(BT_ADDR_DICT[addr].pin, GPIO.LOW)
         # Delay between iterations
         time.sleep(sleep)
+
+
+def init_pins(addr):
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(BT_ADDR_DICT[addr].pin, GPIO.OUT)
+    GPIO.output(BT_ADDR_DICT[addr].pin, GPIO.HIGH)
 
 
 def start_thread(addr, callback, threshold=THRESHOLD, sleep=SLEEP,
@@ -140,11 +135,8 @@ def start_thread(addr, callback, threshold=THRESHOLD, sleep=SLEEP,
 
 
 def main():
-    if not BT_ADDR_LIST:
-        print "Please edit this file and set BT_ADDR_LIST variable"
-        sys.exit(1)
     threads = []
-    for addr in BT_ADDR_LIST:
+    for addr in BT_ADDR_DICT.keys():
         th = start_thread(addr=addr, callback=dummy_callback)
         threads.append(th)
     while True:
