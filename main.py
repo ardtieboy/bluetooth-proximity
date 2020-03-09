@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from bt_proximity/bt_proximity import BluetoothRSSI
+from bt_proximity.bt_rssi import BluetoothRSSI
 import datetime
 import time
 import threading
