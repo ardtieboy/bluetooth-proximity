@@ -1,8 +1,9 @@
 # simple inquiry example
-import bluetooth
+# bluetooth low energy scan
+from bluetooth.ble import DiscoveryService
 
-nearby_devices = bluetooth.discover_devices()
-print("Found {} devices.".format(len(nearby_devices)))
+service = DiscoveryService()
+devices = service.discover(2)
 
-for addr, name in nearby_devices:
-    print("  {} - {}".format(addr, name))
+for address, name in devices.items():
+    print("name: {}, address: {}".format(name, address))
