@@ -9,6 +9,7 @@ while True:
     print("Checking " + time.strftime("%a, %d %b %Y %H:%M:%S", time.gmtime()))
 
     result = bluetooth.lookup_name('F8:2D:7C:EF:40:17', timeout=5)
+    print(result)
     if (result != None):
         print("John: in")
     else:
