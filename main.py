@@ -66,8 +66,8 @@ def bluetooth_listen(addr, threshold, callback, sleep=1, daily=True, debug=False
     while True:
         rssi = b.get_rssi()
         if debug:
-            print "---"
-            print "addr: {}, rssi: {}".format(addr, rssi)
+            print("---")
+            print(f"addr: {addr}, rssi: {rssi}")
         # Sleep and then skip to next iteration if device not found
         if rssi is None:
             time.sleep(sleep)
@@ -77,7 +77,7 @@ def bluetooth_listen(addr, threshold, callback, sleep=1, daily=True, debug=False
         if threshold[0] < rssi < threshold[1]:
             callback(addr, rssi)
         else:
-            print 'Resetting the led'
+            print('Resetting the led')
             GPIO.output(BT_ADDR_DICT[addr].pin, GPIO.LOW)
         # Delay between iterations
         time.sleep(sleep)
