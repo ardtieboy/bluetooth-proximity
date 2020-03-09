@@ -50,7 +50,7 @@ class BluetoothRSSI(object):
                 self.hci_sock, bt.OGF_STATUS_PARAM,
                 bt.OCF_READ_RSSI, bt.EVT_CMD_COMPLETE, 4, self.cmd_pkt)
             print(rssi)
-            rssi = struct.unpack('b', bytes(rssi[3]))[0]
+            rssi = struct.unpack('b', bytes(rssi[3], encoding='utf-8'))[0]
             return rssi
         except IOError:
             # Happens if connection fails (e.g. device is not in range)
