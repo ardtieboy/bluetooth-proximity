@@ -23,7 +23,7 @@ class BluetoothRSSI(object):
         """Prepares the command packet for requesting RSSI"""
         print(bt.ACL_LINK)
         print(type(bt.ACL_LINK))
-        reqstr = struct.pack("6sB17s", bt.str2ba(self.addr), bt.ACL_LINK, "\0" * 17)
+        reqstr = struct.pack("6sB17s", bt.str2ba(self.addr), bt.ACL_LINK, bytes("\0" * 17, 'utf-8'))
         request = array.array("c", reqstr)
         handle = fcntl.ioctl(self.hci_fd, bt.HCIGETCONNINFO, request, 1)
         handle = struct.unpack("8xH14x", request.tostring())[0]
